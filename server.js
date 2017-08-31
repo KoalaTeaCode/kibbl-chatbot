@@ -6,8 +6,6 @@
 // });
 var Habitica = require('habitica');
 var api = new Habitica({
-  id: '206039c6-24e4-4b9f-8a31-61cbb9aa3f66',
-  apiToken: 'ac76a3d2-3b9c-4955-b9e6-b2f60c29b4ba',
   // endpoint: 'http://custom-url.com/', // defaults to https://habitica.com/
   // platform: 'Your-Integration-Name' // defaults to Habitica-Node
 });
