@@ -23,16 +23,77 @@ const botDescription = "I'm your friendly kibbl bot. I can help you find rescues
 function searchForPets (params, msg) {
   let parsedParams = {};
 
-  try {
-    parsedParams = JSON.parse(params);
-  } catch (e) {
-
+  if (typeof params === 'string') {
+    try {
+      parsedParams = JSON.parse(params);
+    } catch (e) {
+      console.log(e);
+    }
+  } else {
+    parsedParams = params;
   }
+
+  let {
+    age,
+    gender,
+    item,
+    near,
+    location,
+  } = parsedParams;
 
   let qs = {};
   if (parsedParams.pagingDate) {
     qs.lastUpdatedBefore = parsedParams.pagingDate;
   }
+
+  if (['dog', 'dogs'].indexOf(item) !== -1) {
+    qs.type = 'Dog';
+  }
+
+  if (['cat', 'cats'].indexOf(item) !== -1) {
+    qs.type = 'Cat';
+  }
+
+  if (['male', 'boy'].indexOf(item) !== -1) {
+    qs.gender = 'Male';
+  }
+
+  if (['girl', 'female'].indexOf(item) !== -1) {
+    qs.gender = 'Female';
+  }
+
+  if (location) {
+    qs.location = location;
+  }
+
+  switch (age) {
+    case 'baby':
+      qs.age = 'Baby';
+      break;
+    case 'young':
+      qs.age = 'Young';
+      break;
+    case 'adult':
+      qs.age = 'Adult';
+      break;
+    case 'senior':
+      qs.age = 'Senior';
+      break;
+    case 'old':
+      qs.age = 'Senior';
+      break;
+    case 'older':
+      qs.age = 'Senior';
+      break;
+  }
+
+  let payloadData = {
+    age,
+    gender,
+    item,
+    near,
+    location,
+  };
 
   let options = {
     method: 'GET',
@@ -42,7 +103,7 @@ function searchForPets (params, msg) {
   };
   return rp(options)
     .then((results) => {
-      return parsePetResults(results, msg, parsedParams);
+      return parsePetResults(results, msg, payloadData);
     });
 }
 
@@ -76,7 +137,6 @@ function parsePetResults (results, msg, params) {
 
   let pagingDate = results.pets[3].lastUpdate || new Date();
   params.pagingDate = pagingDate;
-  console.log("SENDING", params.pagingDate)
 
   f.sendListTemplate(msg.sender, responseList.slice(0, 4), params);
 }
