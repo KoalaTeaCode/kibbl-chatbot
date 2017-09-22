@@ -49,11 +49,11 @@ class FBeamer {
 
     return rp(options)
       .then(function (parsedBody) {
-        console.log(parsedBody)
+        // console.log(parsedBody)
       })
       .catch(function (err) {
-        console.error(Object.keys(err));
-        console.log(err.error)
+        // console.error(Object.keys(err));
+        // console.log(err.error)
       });
   }
 
@@ -69,7 +69,7 @@ class FBeamer {
     if (mode === 'subscribe' && verify_token === this.VERIFY_TOKEN) {
       return res.send(challenge);
     } else {
-      console.log("WEbhook err");
+      // console.log("WEbhook err");
       return res.send(403);
     }
   }
@@ -102,7 +102,6 @@ class FBeamer {
         method: 'POST',
         json: payload
       }, (error, response, body) => {
-        console.log(body)
         if (!error && response.statusCode === 200) {
           resolve({
             messageId: body.message,
@@ -233,7 +232,7 @@ class FBeamer {
               {
                 "title": "View More",
                 "type": "postback",
-                payload,
+                payload: JSON.stringify(payload),
               }
             ],
           },

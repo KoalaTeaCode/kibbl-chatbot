@@ -21,19 +21,32 @@ const api = new Habitica({
 const botDescription = "I'm your friendly kibbl bot. I can help you find rescues, pets and events";
 
 function searchForPets (params, msg) {
+  let parsedParams = {};
+
+  try {
+    parsedParams = JSON.parse(params);
+  } catch (e) {
+
+  }
+
+  let qs = {};
+  if (parsedParams.pagingDate) {
+    qs.lastUpdatedBefore = parsedParams.pagingDate;
+  }
+
   let options = {
     method: 'GET',
     uri: `https://kibbl.io/api/v1/pets`,
-    body: {},
+    qs,
     json: true,
   };
   return rp(options)
     .then((results) => {
-      return parsePetResults(results, msg);
+      return parsePetResults(results, msg, parsedParams);
     });
 }
 
-function parsePetResults (results, msg) {
+function parsePetResults (results, msg, params) {
   let petnames = results.pets.map(result => {
     return result.name;
   });
@@ -62,8 +75,10 @@ function parsePetResults (results, msg) {
   });
 
   let pagingDate = results.pets[3].lastUpdate || new Date();
+  params.pagingDate = pagingDate;
+  console.log("SENDING", params.pagingDate)
 
-  f.sendListTemplate(msg.sender, responseList.slice(0, 4), pagingDate);
+  f.sendListTemplate(msg.sender, responseList.slice(0, 4), params);
 }
 
 function getTasks() {
