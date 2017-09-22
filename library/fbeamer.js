@@ -1,5 +1,6 @@
 'use strict'
 const request = require('request');
+const rp = require('request-promise');
 
 class FBeamer {
   constructor (config) {
@@ -9,6 +10,51 @@ class FBeamer {
         this.PAGE_ACCESS_TOKEN = config.PAGE_ACCESS_TOKEN;
         this.VERIFY_TOKEN = config.VERIFY_TOKEN;
       }
+  }
+
+  setGreeting () {
+    let options = {
+      method: 'POST',
+      uri: `https://graph.facebook.com/v2.6/me/thread_settings?access_token=${this.PAGE_ACCESS_TOKEN}`,
+      body: {
+        setting_type: 'greeting',
+        greeting: {
+          text: "A bot that will help you find adoptable pets"
+        },
+      },
+      json: true,
+    };
+
+    return rp(options)
+      .then(function (parsedBody) {
+        console.log(parsedBody)
+      })
+      .catch(function (err) {
+        console.error(err);
+      });
+  }
+
+  setWhiteListIps () {
+    let options = {
+      method: 'POST',
+      uri: `https://graph.facebook.com/v2.6/me/messenger_profile?access_token=${this.PAGE_ACCESS_TOKEN}`,
+      body: {
+        "whitelisted_domains":[
+          "http://kibbl.io",
+          "https://d2afqr2xdmyzvu.cloudfront.net",
+        ]
+      },
+      json: true,
+    };
+
+    return rp(options)
+      .then(function (parsedBody) {
+        console.log(parsedBody)
+      })
+      .catch(function (err) {
+        console.error(Object.keys(err));
+        console.log(err.error)
+      });
   }
 
   registerHook (req, res) {
@@ -56,6 +102,7 @@ class FBeamer {
         method: 'POST',
         json: payload
       }, (error, response, body) => {
+        console.log(body)
         if (!error && response.statusCode === 200) {
           resolve({
             messageId: body.message,
@@ -73,7 +120,15 @@ class FBeamer {
         id,
       },
       message: {
-        text
+        text,
+        // quick_replies:[
+        //   {
+        //     "content_type":"text",
+        //     "title":"Search",
+        //     // "payload":"<POSTBACK_PAYLOAD>",
+        //     // "image_url":"http://example.com/img/red.png"
+        //   },
+        // ],
       }
     }
     this.sendMessage(obj)
@@ -97,6 +152,100 @@ class FBeamer {
     this.sendMessage(obj)
       .catch(error => console.log(error));
   }
+
+  sendButtonTemplate(id) {
+    let obj = {
+      recipient: {
+        id,
+      },
+      message: {
+        attachment: {
+          type: 'template',
+          payload: {
+            template_type: 'button',
+            text: 'What do you want to do next?',
+            buttons: [
+              {
+                type: 'web_url',
+                url: "https://www.messenger.com",
+                title: "Find Pets"
+              },
+              {
+                type: 'web_url',
+                url: "https://www.messenger.com",
+                title: "Find Events"
+              },
+              {
+                type: 'web_url',
+                url: "https://www.messenger.com",
+                title: "Find Shelters"
+              },
+            ],
+          }
+        }
+      }
+    }
+    this.sendMessage(obj)
+      .catch(error => console.log(error));
+  }
+
+  sendListTemplate(id, list, payload) {
+    // {
+    //   "title": "Classic T-Shirt Collection",
+    //   "subtitle": "See all our colors",
+    //   "image_url": "https://d2afqr2xdmyzvu.cloudfront.net/assets/habitica_lockup2_desat.png",
+    //   "buttons": [
+    //     {
+    //       "title": "View",
+    //       "type": "web_url",
+    //       "url": "https://d2afqr2xdmyzvu.cloudfront.net/assets/habitica_lockup2_desat.png",
+    //       "messenger_extensions": true,
+    //       "webview_height_ratio": "tall",
+    //       "fallback_url": ""
+    //     }
+    //   ]
+    // },
+    // {
+    //   "title": "Classic White T-Shirt",
+    //   "subtitle": "See all our colors",
+    //   "default_action": {
+    //     "type": "web_url",
+    //     "url": "https://d2afqr2xdmyzvu.cloudfront.net/assets/habitica_lockup2_desat.png",
+    //     "messenger_extensions": true,
+    //     "webview_height_ratio": "tall",
+    //     "fallback_url": ""
+    //   }
+    // },
+
+
+    let obj = {
+      recipient: {
+        id,
+      },
+      message: {
+        attachment: {
+          type: 'template',
+          payload: {
+            template_type: 'list',
+            top_element_style: 'compact',
+            elements: list,
+            buttons: [
+              {
+                "title": "View More",
+                "type": "postback",
+                payload,
+              }
+            ],
+          },
+        }
+      }
+    }
+
+    this.sendMessage(obj)
+      .then(success => console.log("succes", success))
+      .catch(error => console.error("error", error));
+  }
+
 }
 
 module.exports = FBeamer;

@@ -1,0 +1,7 @@
+ - [ ] Add Eslint
+ - [ ] Babel
+ - [ ] Add winston
+ - [ ] Add env
+ - [ ] Add flow
+ - [ ] Make list of standard modern javascript needs
+ - [ ] 12 factor app?
