@@ -1,4 +1,5 @@
 "use strict";
+require('dotenv').config()
 const rp = require('request-promise');
 const Habitica = require('habitica');
 const express = require('express')
@@ -11,12 +12,12 @@ const f = new FBeamer(config);
 const matcher = require('./matcher');
 const weather = require('./weather');
 const {currentWeather, forecastWeather} = require('./parser');
-const api = new Habitica({
-  id: '206039c6-24e4-4b9f-8a31-61cbb9aa3f66',
-  apiToken: 'ac76a3d2-3b9c-4955-b9e6-b2f60c29b4ba',
-  // endpoint: 'http://custom-url.com/', // defaults to https://habitica.com/
-  // platform: 'Your-Integration-Name' // defaults to Habitica-Node
-});
+// const api = new Habitica({
+//   id: '',
+//   apiToken: '',
+//   // endpoint: 'http://custom-url.com/', // defaults to https://habitica.com/
+//   // platform: 'Your-Integration-Name' // defaults to Habitica-Node
+// });
 
 const botDescription = "I'm your friendly kibbl bot. I can help you find rescues, pets and events";
 
@@ -142,17 +143,17 @@ function parsePetResults (results, msg, params) {
 }
 
 function getTasks() {
-  api.get('/tasks/user?type=todos').then((res) => {
-    let tasks = res.data;
-    let message = '';
-    let count = 1;
-
-    tasks.forEach(task => {
-      message += `${count} ${task.text}\n`;
-      count += 1;
-    })
-    f.txt(msg.sender, message);
-  });
+  // api.get('/tasks/user?type=todos').then((res) => {
+  //   let tasks = res.data;
+  //   let message = '';
+  //   let count = 1;
+  //
+  //   tasks.forEach(task => {
+  //     message += `${count} ${task.text}\n`;
+  //     count += 1;
+  //   })
+  //   f.txt(msg.sender, message);
+  // });
 }
 
 // On load
