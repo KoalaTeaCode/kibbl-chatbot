@@ -35,7 +35,7 @@ const patternDict = [
     intent: 'WhoAreYou',
   },
   {
-    pattern: '\\b(find|show|list)\\s(?<age>baby|young|adult|senior|old|older)?\\s?(?<gender>male|boy|female|girl)?\\s?(?<item>dog|dogs|cat|cats|event|events|pet|pets|shelter|shelters)\\s?(?<near>near|by|close to|in)?\\s?(?<location>[a-z]+[a-z]+?)?\\b[?.]?$',
+    pattern: '\\b(find|show|list)\\s(?<age>baby|young|adult|senior|old|older)?\\s?(?<gender>male|boy|female|girl)?\\s?(?<item>dog|dogs|cat|cats|event|events|pet|pets|shelter|shelters)\\s?(?<near>near|by|close to|in)?\\s?(?<location>[a-z, ]+[a-z]+?)?\\b[?.]?$',
     intent: 'GenericKibblSearch',
   },
   // {

@@ -57,6 +57,28 @@ class FBeamer {
       });
   }
 
+  setGettingStarted () {
+    let options = {
+      method: 'POST',
+      uri: `https://graph.facebook.com/v2.6/me/messenger_profile?access_token=${this.PAGE_ACCESS_TOKEN}`,
+      body: {
+        "get_started": {
+          payload: "get_started"
+        },
+      },
+      json: true,
+    };
+
+    return rp(options)
+      .then(function (parsedBody) {
+        console.log(parsedBody)
+      })
+      .catch(function (err) {
+        // console.error(Object.keys(err));
+        console.log(err.error)
+      });
+  }
+
   registerHook (req, res) {
     if (!req.query['hub.mode']) {
       return res.send(403);

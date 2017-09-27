@@ -20,6 +20,13 @@ const {currentWeather, forecastWeather} = require('./parser');
 // });
 
 const botDescription = "I'm your friendly kibbl bot. I can help you find rescues, pets and events";
+const tryExamples = "Try some of these examples to get started:\n \
+  1. find pets\n \
+  2. find pets near dallas, tx\n \
+  3. find old dogs\n \
+  4. find young female cats\n \
+  If you need more help, just ask! I can always get a real person in to help :D \
+";
 
 function searchForPets (params, msg) {
   let parsedParams = {};
@@ -160,6 +167,7 @@ function getTasks() {
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
 f.setWhiteListIps();
+f.setGettingStarted();
 
 server.get('/', (req, res, next) => {
   f.registerHook(req, res);
@@ -171,7 +179,10 @@ server.post('/', (req, res, next) => {
     let sender = req.body.entry[0].messaging[0].sender.id;
     let payload = req.body.entry[0].messaging[0].postback.payload;
 
-    if (payload) {
+    if (payload === 'get_started') {
+
+      f.txt(sender, `Hello! ${botDescription} ${tryExamples}`);
+    } else if (payload) {
       f.txt(sender, 'Looking for more');
       searchForPets(payload, {sender});
     }
@@ -210,14 +221,15 @@ server.post('/', (req, res, next) => {
           f.txt(msg.sender, 'Searching for events....');
           break;
         case 'WhoAreYou':
-          f.txt(msg.sender, botDescription);
+          f.txt(msg.sender, `${botDescription} \n ${tryExamples}`);
           break;
         case 'ShowTasks':
           getTasks();
           break;
         default:
           console.log("Idk what");
-          f.txt(msg.sender, 'Sorry, I have not learned that. Would you like one of these options?');
+          // @TODO: send message to Kibbl slack
+          f.txt(msg.sender, `Sorry, I have not learned that. I hav told my masters. Would you like one of these options? \n ${tryExamples}`);
           // @TODO: Send default options
       }
     });
